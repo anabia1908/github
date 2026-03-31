@@ -74,6 +74,79 @@
         color: #f3f4f6;
       }
 
+      .consulta {
+        margin-top: 20px;
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        padding: 18px;
+      }
+
+      .consulta label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .consulta-linha {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .consulta input {
+        flex: 1;
+        min-width: 220px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #4b5563;
+        background: #111827;
+        color: #f3f4f6;
+      }
+
+      .consulta button {
+        padding: 10px 14px;
+        border: 1px solid #6b7280;
+        border-radius: 8px;
+        background: #374151;
+        color: #f9fafb;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .consulta button:hover {
+        background: #4b5563;
+      }
+
+      .mensagem {
+        margin-top: 12px;
+        color: #d1d5db;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 14px;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+
+      th, td {
+        border: 1px solid #374151;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background: #111827;
+        color: #f3f4f6;
+      }
+
+      td {
+        background: #0f172a;
+        color: #e5e7eb;
+      }
+
     </style>
   </head>
   <body>
@@ -92,6 +165,94 @@
     <main>
       <h1>Esta e a segunda pagina</h1>
       <p>Voce chegou aqui ao clicar no botao do index.</p>
+
+      <section class="consulta">
+        <h2>Consulta de clientes (arquivo XLSX)</h2>
+        <label for="busca">Buscar por nome, e-mail, cidade ou plano:</label>
+        <div class="consulta-linha">
+          <input id="busca" type="text" placeholder="Ex: Ana, Premium, Sao Paulo..." />
+          <button id="btn-buscar" type="button">Buscar</button>
+        </div>
+        <p id="mensagem" class="mensagem">Carregando dados da planilha...</p>
+        <div id="resultado"></div>
+      </section>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      let baseDados = [];
+
+      function criarTabela(registros) {
+        if (!registros.length) {
+          return "<p class='mensagem'>Nenhum registro encontrado.</p>";
+        }
+
+        const cabecalho = ["ID", "Nome", "Email", "Cidade", "Plano"];
+        let html = "<table><thead><tr>";
+        cabecalho.forEach((col) => {
+          html += "<th>" + col + "</th>";
+        });
+        html += "</tr></thead><tbody>";
+
+        registros.forEach((item) => {
+          html += "<tr>";
+          html += "<td>" + (item.ID ?? "") + "</td>";
+          html += "<td>" + (item.Nome ?? "") + "</td>";
+          html += "<td>" + (item.Email ?? "") + "</td>";
+          html += "<td>" + (item.Cidade ?? "") + "</td>";
+          html += "<td>" + (item.Plano ?? "") + "</td>";
+          html += "</tr>";
+        });
+
+        html += "</tbody></table>";
+        return html;
+      }
+
+      function buscar() {
+        const termo = document.getElementById("busca").value.trim().toLowerCase();
+        const resultadoEl = document.getElementById("resultado");
+
+        if (!termo) {
+          resultadoEl.innerHTML = criarTabela(baseDados);
+          return;
+        }
+
+        const filtrados = baseDados.filter((item) => {
+          return (
+            String(item.Nome || "").toLowerCase().includes(termo) ||
+            String(item.Email || "").toLowerCase().includes(termo) ||
+            String(item.Cidade || "").toLowerCase().includes(termo) ||
+            String(item.Plano || "").toLowerCase().includes(termo)
+          );
+        });
+
+        resultadoEl.innerHTML = criarTabela(filtrados);
+      }
+
+      async function carregarPlanilha() {
+        const msgEl = document.getElementById("mensagem");
+        const resultadoEl = document.getElementById("resultado");
+
+        try {
+          const resposta = await fetch("dados-clientes.xlsx");
+          const buffer = await resposta.arrayBuffer();
+          const workbook = XLSX.read(buffer, { type: "array" });
+          const nomeAba = workbook.SheetNames[0];
+          const aba = workbook.Sheets[nomeAba];
+          baseDados = XLSX.utils.sheet_to_json(aba, { defval: "" });
+
+          msgEl.textContent = "Dados carregados. Use a busca para filtrar.";
+          resultadoEl.innerHTML = criarTabela(baseDados);
+        } catch (erro) {
+          msgEl.textContent = "Nao foi possivel carregar o arquivo dados-clientes.xlsx.";
+          resultadoEl.innerHTML = "";
+        }
+      }
+
+      document.getElementById("btn-buscar").addEventListener("click", buscar);
+      document.getElementById("busca").addEventListener("input", buscar);
+
+      carregarPlanilha();
+    </script>
   </body>
 </html>
