@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Segunda Pagina</title>
+    <title>Contato</title>
     <style>
       body {
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -17,7 +17,6 @@
         color: #fff;
         padding: 20px;
         text-align: center;
-        font-size: 1.3rem;
       }
 
       .topo {
@@ -45,12 +44,10 @@
         background: rgba(31, 41, 55, 0.85);
         font-size: 0.95rem;
         font-weight: 600;
-        transition: background 0.25s, transform 0.25s;
       }
 
       .menu-horizontal a:hover {
         background: rgba(55, 65, 81, 0.95);
-        transform: translateY(-1px);
       }
 
       @media (max-width: 760px) {
@@ -63,7 +60,7 @@
         max-width: 760px;
         margin: 60px auto;
         background: #111827;
-        padding: 24px;
+        padding: 28px;
         border-radius: 12px;
         border: 1px solid #374151;
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
@@ -74,12 +71,23 @@
         color: #f3f4f6;
       }
 
+      .contato-bloco {
+        margin-top: 18px;
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 10px;
+        padding: 16px;
+      }
+
+      .contato-item {
+        margin: 8px 0;
+      }
     </style>
   </head>
   <body>
     <header>
       <div class="topo">
-        <strong>Segunda Pagina</strong>
+        <strong>Contato</strong>
         <nav class="menu-horizontal" aria-label="Menu principal">
           <a href="index.html">Início</a>
           <a href="segunda-pagina.html">Segunda página</a>
@@ -90,8 +98,14 @@
     </header>
 
     <main>
-      <h1>Esta e a segunda pagina</h1>
-      <p>Voce chegou aqui ao clicar no botao do index.</p>
+      <h1>Contato</h1>
+      <p>Fale com a nossa equipe para tirar duvidas sobre os conteudos do site.</p>
+
+      <div class="contato-bloco">
+        <p class="contato-item"><strong>E-mail:</strong> contato@exemplo.com</p>
+        <p class="contato-item"><strong>Telefone:</strong> (11) 99999-0000</p>
+        <p class="contato-item"><strong>Horario:</strong> Segunda a sexta, 09h as 18h</p>
+      </div>
     </main>
   </body>
 </html>
